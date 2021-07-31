@@ -45,21 +45,29 @@ function createApplication() {
             let { pathname } = url.parse(req.url, true);
 
             // 2.找到对应的路由，执行回调方法
-            function next() {
+            function next(err) {
                 // 已经迭代完整个数组，还是没有找到匹配的路径
                 if (index === app.routes.length) return res.end('Cannot find ')
                 let { method, path, handler } = app.routes[index++] // 每次调用next就去下一个layer
-                if (method === 'middle') { // 处理中间件
-                    if (path === '/' || path === pathname || pathname.starWidth(path + '/')) {
-                        handler(req, res, next)
-                    } else { // 继续遍历
-                        next();
+                if( err ){ // 如果有错误，应该寻找中间件执行。
+                    if(handler.length === 4) { //找到错误中间件
+                        handler(err,req,res,next)
+                    }else { // 继续徐州
+                        next(err) 
                     }
-                } else { // 处理路由
-                    if ((method === m || method === 'all') && (path === pathname || path === "*")) {
-                        handler(req, res);
-                    } else {
-                        next();
+                }else {
+                    if (method === 'middle') { // 处理中间件
+                        if (path === '/' || path === pathname || pathname.starWidth(path + '/')) {
+                            handler(req, res, next)
+                        } else { // 继续遍历
+                            next();
+                        }
+                    } else { // 处理路由
+                        if ((method === m || method === 'all') && (path === pathname || path === "*")) {
+                            handler(req, res);
+                        } else {
+                            next();
+                        }
                     }
                 }
             }
