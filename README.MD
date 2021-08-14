@@ -77,7 +77,7 @@ module.exports = createApplication;
 app.listen实现的是创建一个服务器，并且将服务器绑定到某个端口运行起来。
 
 因此可以这样完善listen方法。
-```
+```js
 // myExpress.js
 let http = require('http');
 function createApplication() {
@@ -103,7 +103,7 @@ module.exports = createApplication;
 
 
 
-```
+```js
 // myExpress.js
 let http = require('http');
 function createApplication() {
